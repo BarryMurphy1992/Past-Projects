@@ -1,0 +1,224 @@
+// project.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "string.h"
+
+typedef struct  {
+	char name[20];
+	int age;
+	char country[40];
+	int year;
+	char sport[20];
+	int gold;
+	int silver;
+	int bronze;
+	int totalMedals;
+	
+}athlete;
+athlete athletes[10000];
+
+int SIZE = 8613;
+
+//Functions
+void readFile();
+void checkAthlete();
+void resultsForYear();
+void findAthleteMostMedals();
+void findCountryMostMedals();
+void menu();
+
+
+int main()
+{
+	readFile();
+
+	puts("\n------------------------------Olympics encyclopedia-----------------------------\n");
+
+	menu();
+	
+	
+    return 0;
+}
+
+void readFile() {
+	//Opening File
+	
+	char delim[2] = "\t";
+	FILE *fptr;
+	char line[300];
+	
+	char *token;
+
+	fptr = fopen("C:\\Users\\Barry\\Desktop\\olympics.txt", "r");
+
+	if (fptr == NULL)
+	{
+		printf("File could not be opened !!\n");
+	}
+
+
+	
+	
+	
+	for (int i = 0; i < SIZE;i++) {
+		fgets(line, 300, fptr);
+		token = strtok(line, delim);
+		
+		strcpy(athletes[i].name, token);
+		token = strtok(NULL, delim);
+		//printf("%s ", athletes[i].name);
+
+		athletes[i].age = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d ", athletes[i].age);
+		
+		strcpy(athletes[i].country, token);
+		token = strtok(NULL, delim);
+		//printf("%s ", athletes[i].country);
+
+		athletes[i].year = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d ", athletes[i].year);
+
+		strcpy(athletes[i].sport, token);
+		token = strtok(NULL, delim);
+		//printf("%s ", athletes[i].sport);
+
+		athletes[i].gold = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d ", athletes[i].gold);
+
+		athletes[i].silver = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d ", athletes[i].silver);
+
+
+		athletes[i].bronze = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d ", athletes[i].bronze);
+		
+		athletes[i].totalMedals = atoi(token);
+		token = strtok(NULL, delim);
+		//printf("%d\n ", athletes[i].totalMedals);
+	}
+
+	fclose(fptr);
+}
+
+void checkAthlete() {
+
+	puts("\n--------------Checking Athlete Stats--------------\n");
+	char athleteName[30];
+	
+
+	printf("Enter name of an athelete\n");
+	scanf(" %[^\n]s", athleteName);
+
+	
+	for (int i = 0; i < SIZE; i++) {
+		if ((_stricmp(athleteName,athletes[i].name)) == 0) {
+			printf("\nAthlete\nName: %s\nAge: %d\nCountry: %s\nYear: %d\nSport: %s\nGold Medals:  %d\nSilver Medals: %d\nBronze Medals: %d\nTotal Medals: %d\n", athletes[i].name, athletes[i].age, athletes[i].country, athletes[i].year, athletes[i].sport, athletes[i].gold, athletes[i].silver, athletes[i].bronze, athletes[i].totalMedals);	
+		}
+		
+	}
+	menu();
+}
+
+void findAthleteMostMedals() {
+
+	puts("\n--------------Checking Athlete with most medals--------------\n");
+
+	char sport[30];
+	int medals = 0;
+	char name[20];
+	
+
+	printf("Enter name of a sport\n");
+	scanf(" %[^\n]s", sport);
+
+	for (int i = 0; i < SIZE; i++) {
+		if ((_stricmp(sport, athletes[i].sport)) == 0 && (athletes[i].totalMedals>medals)) {
+			strcpy(name, athletes[i].name);
+			medals = athletes[i].totalMedals;
+
+		}
+
+	}
+
+		printf("\nThe athlete with the most medals in %s was %s with %d medals\n", sport, name, medals);
+		menu();
+}
+
+void resultsForYear() {
+
+	puts("\n--------------Results for a sport for a certain year--------------\n");
+	char sport[30];
+	int year = 0;
+
+	
+	
+
+	printf("Enter name of a sport\n");
+	scanf(" %[^\n]s", sport);
+
+	printf("Enter a year \n");
+	scanf("%d", &year);
+
+	for (int i = 0; i <SIZE; i++) {
+		if ((year == athletes[i].year) && (_stricmp(sport, athletes[i].sport) == 0)) {
+			
+			printf("\nAthlete\nName: %s\nAge: %d\nCountry: %s\nYear: %d\nSport: %s\nGold Medals:  %d\nSilver Medals: %d\nBronze Medals: %d\nTotal Medals: %d\n", athletes[i].name, athletes[i].age, athletes[i].country, athletes[i].year, athletes[i].sport, athletes[i].gold, athletes[i].silver, athletes[i].bronze, athletes[i].totalMedals);
+		}
+
+	}
+	menu();
+}
+
+void findCountryMostMedals() {
+
+	puts("\n--------------Checking medals won by a certain country in a particular sport--------------\n");
+
+	int medals = 0;
+	char country[30];
+	char sport[30];
+
+	printf("\nEnter name of a country\n");
+	scanf(" %[^\n]s", country);
+
+	printf("\nEnter name of a sport\n");
+	scanf(" %[^\n]s", sport);
+
+	
+	for (int i = 0; i <SIZE; i++) {
+		if ((_stricmp(country, athletes[i].country) == 0) && (_stricmp(sport, athletes[i].sport))) {
+			medals += athletes[i].totalMedals;
+		}
+
+	}
+	printf("\nNumber of medals won by athletes from %s in %s is: %d \n", country,sport ,medals);
+	menu();
+}
+
+void menu() {
+	int userSel = 0;
+
+	printf("\nEnter 1 to searh for an athlete\nEnter 2 to find the athlete with the most medals in a partiular sport\nEnter 3 to find the results for a particular year\nEnter 4 to find the medals won by a certain country in a particular sport\n");
+	scanf("%d", &userSel);
+
+	if (userSel == 1) {
+		checkAthlete();
+	}
+	else if (userSel == 2) {
+		findAthleteMostMedals();
+	}
+	else if (userSel == 3) {
+		resultsForYear();
+	}
+	else {
+		findCountryMostMedals();
+	}
+
+}
